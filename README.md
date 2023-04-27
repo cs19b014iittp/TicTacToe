@@ -9,4 +9,6 @@ Code for each task is written in seperate file:
 
 After running the file, user will be asked to enter n (number of rows or columns on tic-tac-toe board)
 
-* screenshots of outputs are stored in results.png file
+* Total 1000 games are played and output prints number of games won, loss and draws
+
+Note: Screenshots of outputs are stored in results.png file
