@@ -23,11 +23,12 @@ game_over = False
 winner = 0
 
 
-n = 3
+n = int(input('Enter n = '))
+# n = 3
 #create empty 3 x 3 list to represent the grid
 for x in range (n):
-    row = [0] * n
-    markers.append(row)
+	row = [0] * n
+	markers.append(row)
 
 screen_height = 100 * n
 screen_width = 100 * n
@@ -39,196 +40,235 @@ pygame.display.set_caption('Tic Tac Toe')
 again_rect = Rect(screen_width // 2 - 80, screen_height // 2, 160, 50)
 
 def draw_board():
-    bg = (255, 255, 210)
-    grid = (50, 50, 50)
-    screen.fill(bg)
-    for x in range(1,n):
-        pygame.draw.line(screen, grid, (0, 100 * x), (screen_width,100 * x), line_width)
-        pygame.draw.line(screen, grid, (100 * x, 0), (100 * x, screen_height), line_width)
+	bg = (255, 255, 210)
+	grid = (50, 50, 50)
+	screen.fill(bg)
+	for x in range(1,n):
+		pygame.draw.line(screen, grid, (0, 100 * x), (screen_width,100 * x), line_width)
+		pygame.draw.line(screen, grid, (100 * x, 0), (100 * x, screen_height), line_width)
 
-def draw_markers():
-    x_pos = 0
-    for x in markers:
-        y_pos = 0
-        for y in x:
-            if y == 1:
-                pygame.draw.line(screen, red, (x_pos * 100 + 15, y_pos * 100 + 15), (x_pos * 100 + 85, y_pos * 100 + 85), line_width)
-                pygame.draw.line(screen, red, (x_pos * 100 + 85, y_pos * 100 + 15), (x_pos * 100 + 15, y_pos * 100 + 85), line_width)
-            if y == -1:
-                pygame.draw.circle(screen, green, (x_pos * 100 + 50, y_pos * 100 + 50), 38, line_width)
-            y_pos += 1
-        x_pos += 1	
+def draw_markers(): 
+	x_pos = 0
+	for x in markers:
+		y_pos = 0
+		for y in x:
+			if y == 1:
+				pygame.draw.line(screen, red, (x_pos * 100 + 15, y_pos * 100 + 15), (x_pos * 100 + 85, y_pos * 100 + 85), line_width)
+				pygame.draw.line(screen, red, (x_pos * 100 + 85, y_pos * 100 + 15), (x_pos * 100 + 15, y_pos * 100 + 85), line_width)
+			if y == -1:
+				pygame.draw.circle(screen, green, (x_pos * 100 + 50, y_pos * 100 + 50), 38, line_width)
+			y_pos += 1
+		x_pos += 1	
 
 
 def check_game_over():
-    global game_over
-    global winner
+	global game_over
+	global winner
 
-    x_pos = 0
-    for x in markers:
-        #check columns
-        if sum(x) == n:
-            winner = 1
-            game_over = True
-        if sum(x) == -n:
-            winner = 2
-            game_over = True
-        #check rows
-        row_sum = sum([markers[i][x_pos] for i in range(n)])
-        if row_sum == n:
-            winner = 1
-            game_over = True
-        if row_sum == -n:
-            winner = 2
-            game_over = True
-        x_pos += 1
+	x_pos = 0
+	for x in markers:
+		#check columns
+		if sum(x) == n:
+			winner = 1
+			game_over = True
+		if sum(x) == -n:
+			winner = 2
+			game_over = True
+		#check rows
+		row_sum = sum([markers[i][x_pos] for i in range(n)])
+		if row_sum == n:
+			winner = 1
+			game_over = True
+		if row_sum == -n:
+			winner = 2
+			game_over = True
+		x_pos += 1
 
-    #check cross
-    cross_sum = sum([markers[i][i] for i in range(n)])
-    if cross_sum == n or cross_sum == n:
-        winner = 1
-        game_over = True
-    if cross_sum == -n or cross_sum == -n:
-        winner = 2
-        game_over = True
+	#check cross
+	lcross_sum = sum([markers[i][i] for i in range(n)])
+	if lcross_sum == n:
+		winner = 1
+		game_over = True
+	if lcross_sum == -n:
+		winner = 2
+		game_over = True
 
-    #check for tie
-    if game_over == False:
-        tie = True
-        for row in markers:
-            for i in row:
-                if i == 0:
-                    tie = False
-        #if it is a tie, then call game over and set winner to 0 (no one)
-        if tie == True:
-            game_over = True
-            winner = 0
+	rcross_sum = sum([markers[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		winner = 1
+		game_over = True
+	if rcross_sum == -n:
+		winner = 2
+		game_over = True
+
+	#check for tie
+	if game_over == False:
+		tie = True
+		for row in markers:
+			for i in row:
+				if i == 0:
+					tie = False
+		#if it is a tie, then call game over and set winner to 0 (no one)
+		if tie == True:
+			game_over = True
+			winner = 0
 
 def draw_game_over(winner):
 
-    if winner != 0:
-        end_text = "Player " + str(winner) + " wins!"
-    elif winner == 0:
-        end_text = "You have tied!"
+	if winner != 0:
+		end_text = "Player " + str(winner) + " wins!"
+	elif winner == 0:
+		end_text = "You have tied!"
 
-    end_img = font.render(end_text, True, blue)
-    pygame.draw.rect(screen, green, (screen_width // 2 - 100, screen_height // 2 - 60, 200, 50))
-    screen.blit(end_img, (screen_width // 2 - 100, screen_height // 2 - 50))
+	end_img = font.render(end_text, True, blue)
+	pygame.draw.rect(screen, green, (screen_width // 2 - 100, screen_height // 2 - 60, 200, 50))
+	screen.blit(end_img, (screen_width // 2 - 100, screen_height // 2 - 50))
 
-    again_text = 'Play Again?'
-    again_img = font.render(again_text, True, blue)
-    pygame.draw.rect(screen, green, again_rect)
-    screen.blit(again_img, (screen_width // 2 - 80, screen_height // 2 + 10))
+	again_text = 'Play Again?'
+	again_img = font.render(again_text, True, blue)
+	pygame.draw.rect(screen, green, again_rect)
+	screen.blit(again_img, (screen_width // 2 - 80, screen_height // 2 + 10))
 
 def isGameOver(state, n):
-    matrix = []
-    k=0
-    for i in range(n):
-        row = []
-        for j in range(n):
-            row.append(int(state[k]) if int(state[k]) != 2 else -1)
-            k += 1
-        matrix.append(row)
+	matrix = []
+	k=0
+	for i in range(n):
+		row = []
+		for j in range(n):
+			row.append(int(state[k]) if int(state[k]) != 2 else -1)
+			k += 1
+		matrix.append(row)
 
-    x_pos = 0
-    isOver = 0
-    win = 0
-    for x in matrix:
-        #check columns
-        if sum(x) == n:
-            win = 1
-            isOver = 1
-        if sum(x) == -n:
-            win = 2
-            isOver = 2
-        #check rows
-        row_sum = sum([matrix[i][x_pos] for i in range(n)])
-        if row_sum == n:
-            win = 1
-            isOver = 1
-        if row_sum == -n:
-            win = 2
-            isOver = 2
-        x_pos += 1
+	x_pos = 0
+	isOver = 0
+	win = 0
+	for x in matrix:
+		#check columns
+		if sum(x) == n:
+			win = 1
+			isOver = 1
+		if sum(x) == -n:
+			win = 2
+			isOver = 2
+		#check rows
+		row_sum = sum([matrix[i][x_pos] for i in range(n)])
+		if row_sum == n:
+			win = 1
+			isOver = 1
+		if row_sum == -n:
+			win = 2
+			isOver = 2
+		x_pos += 1
 
-    #check cross
-    cross_sum = sum([matrix[i][i] for i in range(n)])
-    if cross_sum == n or cross_sum == n:
-        win = 1
-        isOver = 1
-    if cross_sum == -n or cross_sum == -n:
-        win = 2
-        isOver = 2
+	#check cross
+	lcross_sum = sum([matrix[i][i] for i in range(n)])
+	if lcross_sum == n:
+		win = 1
+		isOver = 1
+	if lcross_sum == -n:
+		win = 2
+		isOver = 2
 
-    #check for tie
-    if isOver == 0:
-        tie = 1
-        for row in matrix:
-            for i in row:
-                if i == 0:
-                    tie = 0
-        #if it is a tie, then call game over and set win to 0 (no one)
-        # if tie == 1:
-        #     isOver = 1
-        #     win = 0
-        if tie == 1:
-            return 3
-    return isOver
+	rcross_sum = sum([matrix[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		win = 1
+		isOver = 1
+	if rcross_sum == -n:
+		win = 2
+		isOver = 2
+
+	#check for tie
+	if isOver == 0:
+		tie = 1
+		for row in matrix:
+			for i in row:
+				if i == 0:
+					tie = 0
+		#if it is a tie, then call game over and set win to 0 (no one)
+		if tie == 1:
+			isOver = 1
+			win = 0
+		if tie == 1:
+			return 3
+		
+	# print(state, isOver)
+	return isOver
 
 def isPlayerWon(state,n,plyr):
-    matrix = []
-    k=0
-    for i in range(n):
-        row = []
-        for j in range(n):
-            row.append(int(state[k]) if int(state[k]) != 2 else -1)
-            k += 1
-        matrix.append(row)
+	p_1=0
+	p_2=0
+	matrix = []
+	k=0
+	for i in range(n):
+		row = []
+		for j in range(n):
+			row.append(int(state[k]) if int(state[k]) != 2 else -1)
+			k += 1
+		matrix.append(row)
 
-    p1=0
-    p2=0
+	p1=0
+	p2=0
 
-    for x in matrix:
-        if sum(x) == n:
-            p1 += 1
-        if sum(x) == -n:
-            p2 += 1
-    if p1 > 1 and plyr == 1:
-        return False
-    if p2 > 1 and plyr == 2:
-        return False
-    if p1 > 0 and p2 > 0:
-        return False
-    
-    p1=0
-    p2=0
-    for j in range(n):
-        colsum = sum([matrix[i][j] for i in range(n)])
-        if colsum == n:
-            p1 += 1
-        if colsum == -n:
-            p2 += 1
-    if p1 > 1 and plyr == 1:
-        return False
-    if p2 > 1 and plyr == 2:
-        return False
-    if p1 > 0 and p2 > 0:
-        return False
+	for x in matrix:
+		if sum(x) == n:
+			p1 += 1
+		if sum(x) == -n:
+			p2 += 1
+	if p1 > 1 and plyr == 1:
+		return False
+	if p2 > 1 and plyr == 2:
+		return False
+	if p1 > 0 and p2 > 0:
+		return False
+	
+	p_1+=p1
+	p_2+=p2
+	
+	p1=0
+	p2=0
+	for j in range(n):
+		colsum = sum([matrix[i][j] for i in range(n)])
+		if colsum == n:
+			p1 += 1
+		if colsum == -n:
+			p2 += 1
+	if p1 > 1 and plyr == 1:
+		return False
+	if p2 > 1 and plyr == 2:
+		return False
+	if p1 > 0 and p2 > 0:
+		return False
+	
+	p_1+=p1
+	p_2+=p2
 
-    p1=0
-    p2=0
-    cross_sum = sum([matrix[i][i] for i in range(n)])
-    if cross_sum == n:
-        p1 += 1
-    if cross_sum == -n:
-        p2 += 1
+	lcross_sum = sum([matrix[i][i] for i in range(n)])
+	if lcross_sum == n:
+		p_1 += 1
+	if lcross_sum == -n:
+		p_2 += 1
+	
+	rcross_sum = sum([matrix[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		p_1 += 1
+	if rcross_sum == -n:
+		p_2 += 1
 
-    if p1 > 1 and plyr == 1:
-        return False
-    if p2 > 1 and plyr == 2:
-        return False
+	if plyr == 1 and p_2 > 0:
+		return False
+	if plyr == 2 and p_1 > 0:
+		return False
+	
+	if plyr == 1 and p_1 > 0:
+		return True
+	if plyr == 2 and p_2 > 0:
+		return True
+	
+	return False
 
-    return True
+# 112
+# 211
+# 122
 
 
 def basek(num, k):
@@ -236,34 +276,36 @@ def basek(num, k):
         return '0'.rjust(k*k, '0')
     nums = []
     while num:
-        num, r = divmod(num, k)
+        num, r = divmod(num, 3)
         nums.append(str(r))
     ret = ''.join(reversed(nums))
     return ret.rjust(k*k, '0')
 
 def decimal(base_k, k):
-    ans = 0
-    for i in base_k:
-        ans = ans * k + int(i)
-    return ans
+	ans = 0
+	for i in base_k:
+		ans = ans * k + int(i)
+	return ans
 
 def getValidStates(n):
-    valid_states = []
-    for i in range(3**(n*n)):
-        base_n = basek(i,n)
-        num_1s = base_n.count('1')
-        num_2s = base_n.count('2')
+	valid_states = []
+	for i in range(3**(n*n)):
+		base_n = basek(i,n)
+		num_1s = base_n.count('1')
+		num_2s = base_n.count('2')
 
-        if num_1s == num_2s and isGameOver(base_n, n) == 0:
-            # if isGameOver(basek(i,n), n) == 0: 
-            valid_states.append(base_n)
-        elif num_1s == num_2s and isPlayerWon(base_n,n,2):
-            valid_states.append(base_n)
-        elif num_1s == num_2s+1 and isPlayerWon(base_n,n,1):
-            valid_states.append(base_n)
-        
+		if num_1s == num_2s and isGameOver(base_n, n) == 0:
+			# if isGameOver(basek(i,n), n) == 0: 
+			valid_states.append(base_n)
+		elif num_1s == num_2s+1 and isGameOver(base_n, n) == 3:
+			valid_states.append(base_n)
+		elif num_1s == num_2s and isPlayerWon(base_n,n,2):
+			valid_states.append(base_n)
+		elif num_1s == num_2s+1 and isPlayerWon(base_n,n,1):
+			valid_states.append(base_n)
+		
 
-    return valid_states
+	return valid_states
 
 # valid_states = getValidStates(n)
 
@@ -308,66 +350,6 @@ def rewardVec(state, action, n):
 
 gamma = 1
 policy = {}
-def ValueIteration(n):
-    global policy
-    validStates = getValidStates(n)
-    numValStates = len(validStates)
-    print(numValStates)
-
-    indexOfState = {validStates[i]:i for i in range(numValStates)}
-    policy = {x:0 for x in validStates}
-    
-    w = np.zeros((numValStates,1))
-    
-    while True:
-        # print(1)
-        w_old = w.copy()
-        for i in range(numValStates):
-            state = validStates[i]
-            maxa = -100
-            max_a = 0
-            for a in range(n*n):
-                w_i0 = 0
-                if state[a] == '0' and state.count('1') == state.count('2') and (isGameOver(state,n) == 0):
-                    next_states = transition_func(validStates[i], a, n)
-                    
-                    for ns in next_states:
-                        rwd = 0
-                        igo = isGameOver(ns,n)
-                        if igo == 1:
-                            rwd = 2
-                        elif igo == 2:
-                            rwd = -2
-                        elif igo == 3:
-                            rwd = 1
-
-                        w_i0 += rwd + gamma*w_old[indexOfState[ns]]
-                    w_i0 /= len(next_states)
-                # maxa = max(maxa, w_i0)
-                if w_i0 > maxa:
-                    maxa = w_i0
-                    max_a = a
-
-            w[i][0] = maxa
-            policy[state] = max_a
-                    # reward_vec = rewardVec(state, a, n)
-                    # w[i][0] = max(w[i][0], np.matmul(trans_func.T, reward_vec + gamma*w_old))
-        
-        max_diff = 0
-        for i in range(numValStates):
-            max_diff = max(max_diff,abs(w[i][0] - w_old[i][0]))
-        
-        # print(max_diff)
-        if max_diff == 0:
-            print('Value Iteration Completed')
-            # for x in w:
-            # 	if x>0:
-            # 		print(x)
-            break
-    # print(policy)			
-    
-# ValueIteration(3)
-
 def PolicyIteration(n):
     global policy
     validStates = getValidStates(n)
@@ -457,7 +439,7 @@ def PolicyIteration(n):
             print('Policy Iteration completed')
             break
 
-PolicyIteration(3)
+PolicyIteration(n)
 
 #main loop
 run = True

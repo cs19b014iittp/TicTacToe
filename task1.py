@@ -83,11 +83,19 @@ def check_game_over():
 		x_pos += 1
 
 	#check cross
-	cross_sum = sum([markers[i][i] for i in range(n)])
-	if cross_sum == n or cross_sum == n:
+	lcross_sum = sum([markers[i][i] for i in range(n)])
+	if lcross_sum == n:
 		winner = 1
 		game_over = True
-	if cross_sum == -n or cross_sum == -n:
+	if lcross_sum == -n:
+		winner = 2
+		game_over = True
+
+	rcross_sum = sum([markers[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		winner = 1
+		game_over = True
+	if rcross_sum == -n:
 		winner = 2
 		game_over = True
 

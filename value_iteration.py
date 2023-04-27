@@ -23,7 +23,8 @@ game_over = False
 winner = 0
 
 
-n = 3
+n = int(input('Enter n = '))
+# n = 2
 #create empty 3 x 3 list to represent the grid
 for x in range (n):
 	row = [0] * n
@@ -46,7 +47,7 @@ def draw_board():
 		pygame.draw.line(screen, grid, (0, 100 * x), (screen_width,100 * x), line_width)
 		pygame.draw.line(screen, grid, (100 * x, 0), (100 * x, screen_height), line_width)
 
-def draw_markers():
+def draw_markers(): 
 	x_pos = 0
 	for x in markers:
 		y_pos = 0
@@ -84,11 +85,19 @@ def check_game_over():
 		x_pos += 1
 
 	#check cross
-	cross_sum = sum([markers[i][i] for i in range(n)])
-	if cross_sum == n or cross_sum == n:
+	lcross_sum = sum([markers[i][i] for i in range(n)])
+	if lcross_sum == n:
 		winner = 1
 		game_over = True
-	if cross_sum == -n or cross_sum == -n:
+	if lcross_sum == -n:
+		winner = 2
+		game_over = True
+
+	rcross_sum = sum([markers[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		winner = 1
+		game_over = True
+	if rcross_sum == -n:
 		winner = 2
 		game_over = True
 
@@ -152,11 +161,19 @@ def isGameOver(state, n):
 		x_pos += 1
 
 	#check cross
-	cross_sum = sum([matrix[i][i] for i in range(n)])
-	if cross_sum == n or cross_sum == n:
+	lcross_sum = sum([matrix[i][i] for i in range(n)])
+	if lcross_sum == n:
 		win = 1
 		isOver = 1
-	if cross_sum == -n or cross_sum == -n:
+	if lcross_sum == -n:
+		win = 2
+		isOver = 2
+
+	rcross_sum = sum([matrix[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		win = 1
+		isOver = 1
+	if rcross_sum == -n:
 		win = 2
 		isOver = 2
 
@@ -173,9 +190,13 @@ def isGameOver(state, n):
 			win = 0
 		if tie == 1:
 			return 3
+		
+	# print(state, matrix, isOver)
 	return isOver
 
 def isPlayerWon(state,n,plyr):
+	p_1=0
+	p_2=0
 	matrix = []
 	k=0
 	for i in range(n):
@@ -200,6 +221,9 @@ def isPlayerWon(state,n,plyr):
 	if p1 > 0 and p2 > 0:
 		return False
 	
+	p_1+=p1
+	p_2+=p2
+	
 	p1=0
 	p2=0
 	for j in range(n):
@@ -214,21 +238,37 @@ def isPlayerWon(state,n,plyr):
 		return False
 	if p1 > 0 and p2 > 0:
 		return False
+	
+	p_1+=p1
+	p_2+=p2
 
-	p1=0
-	p2=0
-	cross_sum = sum([matrix[i][i] for i in range(n)])
-	if cross_sum == n:
-		p1 += 1
-	if cross_sum == -n:
-		p2 += 1
+	lcross_sum = sum([matrix[i][i] for i in range(n)])
+	if lcross_sum == n:
+		p_1 += 1
+	if lcross_sum == -n:
+		p_2 += 1
+	
+	rcross_sum = sum([matrix[i][n-i-1] for i in range(n)])
+	if rcross_sum == n:
+		p_1 += 1
+	if rcross_sum == -n:
+		p_2 += 1
 
-	if p1 > 1 and plyr == 1:
+	if plyr == 1 and p_2 > 0:
 		return False
-	if p2 > 1 and plyr == 2:
+	if plyr == 2 and p_1 > 0:
 		return False
+	
+	if plyr == 1 and p_1 > 0:
+		return True
+	if plyr == 2 and p_2 > 0:
+		return True
+	
+	return False
 
-	return True
+# 112
+# 211
+# 122
 
 
 def basek(num, k):
@@ -236,7 +276,7 @@ def basek(num, k):
         return '0'.rjust(k*k, '0')
     nums = []
     while num:
-        num, r = divmod(num, k)
+        num, r = divmod(num, 3)
         nums.append(str(r))
     ret = ''.join(reversed(nums))
     return ret.rjust(k*k, '0')
@@ -251,11 +291,14 @@ def getValidStates(n):
 	valid_states = []
 	for i in range(3**(n*n)):
 		base_n = basek(i,n)
+		# print(i, base_n)
 		num_1s = base_n.count('1')
 		num_2s = base_n.count('2')
 
 		if num_1s == num_2s and isGameOver(base_n, n) == 0:
 			# if isGameOver(basek(i,n), n) == 0: 
+			valid_states.append(base_n)
+		elif num_1s == num_2s+1 and isGameOver(base_n, n) == 3:
 			valid_states.append(base_n)
 		elif num_1s == num_2s and isPlayerWon(base_n,n,2):
 			valid_states.append(base_n)
@@ -366,7 +409,7 @@ def ValueIteration(n):
 			break
 	# print(policy)			
 	
-ValueIteration(3)
+ValueIteration(n)
 
 #main loop
 run = True
